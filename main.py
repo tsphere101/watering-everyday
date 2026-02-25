@@ -14,7 +14,7 @@ def main():
     content = "รดน้ำกันจ้า <@650661678316388372> <@739506315784749097>"
     params = {
         "username": "รดน้ำ",
-        "avatar_url": "https://github.com/tsphere101/watering-everyday/sanrio-hello-kitty-gogogal.jpg",
+        "avatar_url": "https://raw.githubusercontent.com/tsphere101/watering-everyday/refs/heads/main/sanrio-hello-kitty-gogogal.jpg",
         "allowed_mentions": {
             "users": ["650661678316388372", "739506315784749097"]
         },
