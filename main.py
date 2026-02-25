@@ -14,7 +14,7 @@ def main():
     content = "รดน้ำกันจ้า <@650661678316388372> <@739506315784749097>"
     params = {
         "username": "รดน้ำ",
-        "avatar_url": "https://image.made-in-china.com/2f0j00dKAiHzWRSokO/Colorful-Powder-Coated-Water-Sprout-Zinc-Gavanized-Watering-Can-for-Gardening-Work.webp",
+        "avatar_url": "https://github.com/tsphere101/watering-everyday/sanrio-hello-kitty-gogogal.jpg",
         "allowed_mentions": {
             "users": ["650661678316388372", "739506315784749097"]
         },
