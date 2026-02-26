@@ -1,9 +1,9 @@
 name: Daily Discord Watering
 
 on:
-  schedule:
-    - cron: '0 14 * * *' # 14:00 UTC is 21:00 UTC+7
   workflow_dispatch: # Allow manual trigger
+  repository_dispatch:
+    types: [watering-schedule] # Allow trigger from Google Cloud Scheduler
 
 jobs:
   watering:
