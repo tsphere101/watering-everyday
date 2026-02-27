@@ -34,14 +34,18 @@ func main() {
 		os.Exit(1)
 	}
 
-	layout := "2006-01-02"
-	startDate, err := time.Parse(layout, gardenStartDate)
+	location, err := time.LoadLocation("Asia/Bangkok")
+	if err != nil {
+		location = time.FixedZone("Bangkok", 7*60*60)
+	}
+
+	startDate, err := time.ParseInLocation("2006-01-02", gardenStartDate, location)
 	if err != nil {
 		fmt.Printf("Error parsing start date: %v\n", err)
 		os.Exit(1)
 	}
 
-	today := time.Now()
+	today := time.Now().In(location)
 	daysSinceStart := int(today.Sub(startDate).Hours() / 24)
 	currentDay := daysSinceStart + 1
 
