@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	prompt               = "เขียนประโยคเชิญชวนเพื่อนชื่อ เชอร์รี่ และ นวว มารดน้ำต้นไม้ 10 แบบ แตกต่างกัน ขอแบบสั้น ๆ น่ารัก ๆ (รดน้ำต้นไม้ในเกมทุกวันเพื่อไม่ให้ต้นไม้เสียชีวิต)"
+	defaultPrompt        = "เขียนประโยคเชิญชวนเพื่อนชื่อ เชอร์รี่ และ ท่านหญิงนวว มารดน้ำต้นไม้ 10 แบบ แตกต่างกัน ขอแบบดุดันไม่เกรงใจใคร (รดน้ำต้นไม้ในเกมทุกวันเพื่อไม่ให้ต้นไม้เสียชีวิต)"
 	discordMaxLength     = 1900
 	geminiTimeoutSeconds = 60
 	gardenStartDate      = "2025-08-13"
@@ -37,6 +37,11 @@ func main() {
 	location, err := time.LoadLocation("Asia/Bangkok")
 	if err != nil {
 		location = time.FixedZone("Bangkok", 7*60*60)
+	}
+
+	prompt := os.Getenv("PROMPT")
+	if prompt == "" {
+		prompt = defaultPrompt
 	}
 
 	startDate, err := time.ParseInLocation("2006-01-02", gardenStartDate, location)
