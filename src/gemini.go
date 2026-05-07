@@ -16,7 +16,7 @@ func GenerateMessage(ctx context.Context, apiKey, prompt string) (string, []stri
 		Backend: genai.BackendGeminiAPI,
 	})
 	if err != nil {
-		return "", nil, fmt.Errorf("failed to create Gemini client: %w", err)
+		return "", nil, fmt.Errorf(errCreateGeminiClient, err)
 	}
 
 	parts := []*genai.Part{
@@ -41,11 +41,11 @@ func GenerateMessage(ctx context.Context, apiKey, prompt string) (string, []stri
 
 	result, err := client.Models.GenerateContent(ctx, "gemini-3-flash-preview", []*genai.Content{{Parts: parts}}, config)
 	if err != nil {
-		return "", nil, fmt.Errorf("failed to generate content: %w", err)
+		return "", nil, fmt.Errorf(errGenerateContent, err)
 	}
 
 	if len(result.Candidates) == 0 || len(result.Candidates[0].Content.Parts) == 0 {
-		return "", nil, fmt.Errorf("no response from Gemini")
+		return "", nil, fmt.Errorf(errNoResponseGemini)
 	}
 
 	jsonStr := result.Candidates[0].Content.Parts[0].Text
@@ -55,11 +55,11 @@ func GenerateMessage(ctx context.Context, apiKey, prompt string) (string, []stri
 		Messages []string `json:"messages"`
 	}
 	if err := json.Unmarshal([]byte(jsonStr), &response); err != nil {
-		return "", nil, fmt.Errorf("failed to parse JSON response: %w", err)
+		return "", nil, fmt.Errorf(errParseJSONResponse, err)
 	}
 
 	if len(response.Messages) == 0 {
-		return "", nil, fmt.Errorf("no messages in response")
+		return "", nil, fmt.Errorf(errNoMessages)
 	}
 
 	dayOfYear := time.Now().YearDay()

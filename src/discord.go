@@ -24,7 +24,6 @@ func SendToDiscord(webhook, message, username, avatarURL string, mentionIDs []st
 	chunks := splitMessage(fullMessage, discordMaxLength)
 
 	client := &http.Client{}
-	var lastResp *http.Response
 
 	for i, chunk := range chunks {
 		if i > 0 && i < len(chunks)-1 {
@@ -40,25 +39,26 @@ func SendToDiscord(webhook, message, username, avatarURL string, mentionIDs []st
 
 		jsonData, err := json.Marshal(discordReq)
 		if err != nil {
-			return fmt.Errorf("failed to marshal discord request: %w", err)
+			return fmt.Errorf(errMarshalDiscord, err)
 		}
 
 		req, err := http.NewRequest("POST", webhook, bytes.NewBuffer(jsonData))
 		if err != nil {
-			return fmt.Errorf("failed to create discord request: %w", err)
+			return fmt.Errorf(errCreateDiscordReq, err)
 		}
 
 		req.Header.Set("Content-Type", "application/json")
 
-		lastResp, err = client.Do(req)
+		resp, err := client.Do(req)
 		if err != nil {
-			return fmt.Errorf("failed to send to discord: %w", err)
+			return fmt.Errorf(errSendChunk, i, err)
 		}
-		lastResp.Body.Close()
-	}
-
-	if lastResp != nil && lastResp.StatusCode != http.StatusNoContent && lastResp.StatusCode != http.StatusOK {
-		return fmt.Errorf("discord returned status: %d", lastResp.StatusCode)
+		if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusOK {
+			err := fmt.Errorf(errDiscordStatus, resp.StatusCode, i)
+			resp.Body.Close()
+			return err
+		}
+		resp.Body.Close()
 	}
 
 	return nil

@@ -1,20 +1,40 @@
 name: Daily Discord Watering
 
 on:
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch:
   repository_dispatch:
-    types: [watering-schedule] # Allow trigger from Google Cloud Scheduler
+    types: [watering-schedule]
+
+concurrency:
+  group: watering-daily
+  cancel-in-progress: false
 
 jobs:
   watering:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - name: Get Bangkok date
+        id: date
+        run: echo "today=$(TZ='Asia/Bangkok' date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+
+      - name: Check if already sent today
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: .watering-sent
+          key: watering-sent-${{ steps.date.outputs.today }}
 
       - name: Run watering bot
+        if: steps.cache.outputs.cache-hit != 'true'
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           PROMPT: ${{ secrets.PROMPT }}
+          SEND_TO_DISCORD: "true"
         run: ./watering-bot
+
+      - name: Mark sent
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: date +'%s' > .watering-sent

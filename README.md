@@ -10,11 +10,29 @@ Discord bot that sends daily watering reminders, triggered by Google Cloud Sched
 
 ## Setup
 
-1. Add secrets: `GEMINI_API_KEY`, `DISCORD_WEBHOOK`
-2. Configure in `src/main.go`: `prompt`, `gardenStartDate`, `discordMentionIDs`
-3. Build: `go build -o watering-bot ./src`
+1. Add GitHub Secrets: `GEMINI_API_KEY`, `DISCORD_WEBHOOK`
+2. Edit prompts in `prompts.json` (no code changes needed)
+3. Build and commit the binary
+
+```bash
+make build        # lint → tests → linux/amd64 binary (for production)
+make build-local  # macOS binary (for local testing)
+make test         # run all tests
+```
 
 ## Trigger
 
 - Manual: GitHub Actions `workflow_dispatch`
 - Automatic: Google Cloud Scheduler → `repository_dispatch`
+
+## Local Testing
+
+Run without sending to Discord (safe — stdout only):
+```bash
+./watering-bot
+```
+
+Send for real:
+```bash
+SEND_TO_DISCORD=true ./watering-bot
+```

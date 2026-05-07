@@ -1,0 +1,57 @@
+Discord Watering Reminder with "Skip Logic"
+
+Context:
+
+ปัจจุบันมีระบบ Reminder รดน้ำต้นไม้ในเกม ทำงานบน Google Cloud Cron ซึ่งจะส่ง HTTP Post ไป Trigger GitHub Workflow ทุกวันเวลา 21:00 น. (Bangkok Time) เพื่อรันไฟล์ Golang Executable โดยโค้ดเดิมจะเรียก Gemini API เพื่อเจนข้อความและส่งเข้า Discord Webhook
+
+
+The Problem:
+
+บางวันมีการรดน้ำไปก่อนเวลาแล้ว จึงไม่ต้องการให้บอทแจ้งเตือนซ้ำอีกหากมีคนพิมพ์ยืนยันในช่องแชท
+
+
+New Requirement (The Solution):
+
+เพิ่ม Logic ในการ "ดักอ่านแชท" (Message History) ก่อนเริ่มทำงานหลัก โดยใช้ Discord Bot Token เพื่อเช็คว่าในวันนี้ (ตั้งแต่ 00:00 น. ถึงปัจจุบัน) มีใครพิมพ์ข้อความว่า "รดน้ำแล้ว" หรือไม่ ถ้ามีให้ยุติการทำงานทันที
+
+Technical Specifications:
+
+1. Environment Variables (GitHub Secrets):
+
+DISCORD_BOT_TOKEN: โทเค็นของ Discord Bot (ต้องเปิด Message Content Intent แล้ว)
+
+DISCORD_CHANNEL_ID: ID ของห้องแชทที่ต้องการให้อ่านข้อความ
+
+GEMINI_API_KEY: (เดิม) สำหรับเจนข้อความ
+
+DISCORD_WEBHOOK_URL: (เดิม) สำหรับส่งการแจ้งเตือน
+
+2. Logic Flow in Golang:
+
+Initialize Discord Session: ใช้ Library github.com/bwmarrin/discordgo สร้าง Session ด้วย DISCORD_BOT_TOKEN
+
+Fetch History: ดึงข้อความย้อนหลัง (Messages) จาก DISCORD_CHANNEL_ID ประมาณ 50-100 ข้อความ
+
+Time Filtering:
+
+ตั้งค่า Timezone เป็น Asia/Bangkok
+
+คำนวณหาเวลาเริ่มต้นของวันนี้ (Today at 00:00:00)
+
+Content Matching: วนลูปเช็คข้อความที่เกิดขึ้น หลังจาก 00:00 น. ของวันนี้เท่านั้น:
+
+หากพบข้อความที่มีเนื้อหาตรงกับคำว่า "รดน้ำแล้ว" (Exact Match) -> ให้ os.Exit(0) หรือ return ทันทีโดยไม่ทำงานต่อ
+
+Proceed to Reminder: หากวนลูปจนจบแล้วไม่พบคำดังกล่าว -> ให้รัน Logic เดิม (เรียก Gemini API และส่ง Webhook)
+
+3. Critical Checklist for the Agent:
+
+ให้ใช้ time.LoadLocation("Asia/Bangkok") เพื่อให้เวลาตรงกับผู้ใช้
+
+จัดการเรื่อง Error Handling กรณีดึงข้อความจาก Discord ไม่สำเร็จ (เช่น Token หมดอายุ)
+
+โครงสร้างโปรแกรมต้องรองรับการรันแบบ CLI บน GitHub Actions
+
+
+
+อย่างแรกก่อนเริ่มให้ cross check กับฉันก่อนว่าปัจจุบัน ฉันได้เริ่มทำไปแล้วหรือยัง ฉัน setup อะไรไปแล้วบ้าง ฉันมีทำอะไรไปถึงไหนแล้ว
