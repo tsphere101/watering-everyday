@@ -456,6 +456,8 @@ func TestGenerateMessage_Success(t *testing.T) {
 }
 
 func TestGenerateMessage_ClientCreationFails(t *testing.T) {
+	t.Setenv("GEMINI_API_KEY", "")
+	t.Setenv("GOOGLE_API_KEY", "")
 	_, _, err := GenerateMessage(context.Background(), "", "test prompt")
 	if err == nil {
 		t.Fatal("expected error, got nil")
