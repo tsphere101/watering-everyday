@@ -42,9 +42,6 @@ func main() {
 
 	prompt := loadPrompt(location)
 	if prompt == "" {
-		prompt = os.Getenv("PROMPT")
-	}
-	if prompt == "" {
 		prompt = defaultPrompt
 	}
 

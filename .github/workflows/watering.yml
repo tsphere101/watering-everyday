@@ -31,7 +31,6 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          PROMPT: ${{ secrets.PROMPT }}
           SEND_TO_DISCORD: "true"
         run: ./watering-bot
 
