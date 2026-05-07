@@ -2,6 +2,9 @@ package main
 
 const (
 	// main.go
+	errWebhookNotSetSend = "Error: DISCORD_WEBHOOK not set"
+	errSendCustom       = "Error sending message: %v"
+	msgSentCustom       = "Message sent to Discord"
 	errAPIKeyNotSet    = "Error: GEMINI_API_KEY not set"
 	errWebhookNotSet   = "Error: DISCORD_WEBHOOK not set (required when SEND_TO_DISCORD=true)"
 	errParseStartDate  = "Error parsing start date: %v"

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"os"
 	"time"
@@ -22,8 +23,26 @@ var (
 )
 
 func main() {
-	apiKey := os.Getenv("GEMINI_API_KEY")
+	sendMsg := flag.String("send", "", "Send a custom message to Discord webhook")
+	flag.Parse()
+
 	discordWebhook := os.Getenv("DISCORD_WEBHOOK")
+
+	if *sendMsg != "" {
+		if discordWebhook == "" {
+			fmt.Println(errWebhookNotSetSend)
+			os.Exit(1)
+		}
+		err := SendToDiscord(discordWebhook, *sendMsg, discordUsername, discordAvatarURL, discordMentionIDs)
+		if err != nil {
+			fmt.Printf(errSendCustom+"\n", err)
+			os.Exit(1)
+		}
+		fmt.Println(msgSentCustom)
+		return
+	}
+
+	apiKey := os.Getenv("GEMINI_API_KEY")
 	shouldSend := os.Getenv("SEND_TO_DISCORD") == "true"
 
 	if apiKey == "" {

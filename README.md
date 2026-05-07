@@ -15,8 +15,8 @@ Discord bot that sends daily watering reminders, triggered by Google Cloud Sched
 3. Build and commit the binary
 
 ```bash
-make build        # lint → tests → linux/amd64 binary (for production)
-make build-local  # macOS binary (for local testing)
+make build        # lint → tests → linux/amd64 binaries (for production)
+make build-local  # macOS binaries (for local testing)
 make test         # run all tests
 ```
 
@@ -35,4 +35,12 @@ Run without sending to Discord (safe — stdout only):
 Send for real:
 ```bash
 SEND_TO_DISCORD=true ./watering-bot
+```
+
+## Broadcast Tool
+
+Send a custom message to Discord with the same bot profile:
+
+```bash
+DISCORD_WEBHOOK=your_url ./broadcast "รดน้ำกันจ้า"
 ```
