@@ -1,15 +1,13 @@
 BINARY=watering-bot
+BINARY_MACOS=watering-bot-macos
 GOOS=linux
 GOARCH=amd64
 
-.PHONY: build build-local test vet clean broadcast
+.PHONY: build test vet clean broadcast
 
 build: vet test
 	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags="-s -w" -o $(BINARY) ./src
-
-build-local:
-	go build -o $(BINARY) ./src
-	go build -o broadcast ./cmd/broadcast
+	go build -o $(BINARY_MACOS) ./src
 
 vet:
 	go vet ./...
@@ -21,5 +19,5 @@ broadcast:
 	go build -o broadcast ./cmd/broadcast
 
 clean:
-	rm -f $(BINARY) broadcast
+	rm -f $(BINARY) $(BINARY_MACOS) broadcast
 
