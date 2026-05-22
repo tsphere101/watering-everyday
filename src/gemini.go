@@ -39,7 +39,7 @@ func GenerateMessage(ctx context.Context, apiKey, prompt string) (string, []stri
 		},
 	}
 
-	result, err := client.Models.GenerateContent(ctx, "gemini-3-flash-preview", []*genai.Content{{Parts: parts}}, config)
+	result, err := client.Models.GenerateContent(ctx, "gemini-3.1-flash-lite", []*genai.Content{{Parts: parts}}, config)
 	if err != nil {
 		return "", nil, fmt.Errorf(errGenerateContent, err)
 	}
